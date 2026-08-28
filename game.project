@@ -1,0 +1,5 @@
+[project]
+title = Defold Utils
+
+[library]
+include_dirs = utility
