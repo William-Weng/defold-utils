@@ -19,8 +19,10 @@
 在你的 Defold 專案中開啟 `game.project`，於 **Dependencies** 加入此 repository 的 ZIP URL：
 
 ```text
-https://github.com/William-Weng/defold-utils/archive/refs/tags/v0.1.0.zip
+https://github.com/William-Weng/defold-utils/archive/refs/tags/0.1.0.zip
 ```
+
+![](dependencies.png)
 
 然後在 Defold Editor 執行：
 
