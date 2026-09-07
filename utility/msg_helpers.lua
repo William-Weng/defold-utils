@@ -31,24 +31,34 @@ M.TARGET = {
 -- 對 @render: 發送任意 command
 -- @param command string: command 名稱（例如 M.COMMAND.USE_FIXED_FIT_PROJECTION）
 -- @param params table?: 要傳的參數 table
-function M.post_render(command, params)
+local function post_render(command, params)
 	msg.post(M.TARGET.RENDER, command, params)
 end
 
 -- 對當前 component (".") 發送任意 command（內部使用）
 -- @param command string: command 名稱
 -- @param params table?: 要傳的參數 table
-local function post_self(command, params)
-	msg.post(M.TARGET.SELF, command, params)
+local function post_self(command)
+	msg.post(M.TARGET.SELF, command)
 end
 
 -- ========== 高階 helper ==========
+
+-- 泛用的 msg.post 包裝函式
+-- 提供統一的進入點，方便未來集中處理 log、除錯或額外邏輯。
+--
+-- @param target string: msg.post 的 target，例如 ".", "@render:", "#game_object"
+-- @param command string: 要發送的 command 名稱
+-- @param params table?: 要傳的參數 table，可省略
+function M.post(target, command, params)
+	msg.post(target, command, params)
+end
 
 -- 設定 render 使用 fixed fit projection
 -- @param near number: near plane（預設 -1）
 -- @param far number: far plane（預設 1）
 function M.use_fixed_fit_projection(near, far)
-	M.post_render(M.COMMAND.USE_FIXED_FIT_PROJECTION, {
+	post_render(M.COMMAND.USE_FIXED_FIT_PROJECTION, {
 		near = near or -1,
 		far  = far or 1,
 	})
