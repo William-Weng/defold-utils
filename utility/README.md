@@ -124,3 +124,69 @@ end
 DEBUG:SCRIPT: ✅ [main/player/player.script:18] player initialized
 DEBUG:SCRIPT: ✅ [main/player/player.script:13] play animation: hash: [idle]
 ```
+
+## `msg_helpers`
+
+集中管理 Defold 專案中常用的 `msg.post` 呼叫，透過 target、command 常數與高階 helper 函式，減少重複字串並讓訊息用途更容易理解。
+
+### Import
+
+```lua
+local msg_helpers = require("utility.msg_helpers")
+```
+
+### Targets and commands
+
+`msg_helpers.TARGET` 集中定義常用的訊息目標：
+
+```lua
+msg_helpers.TARGET.SELF   -- "."，目前的 script component
+msg_helpers.TARGET.RENDER -- "@render:"，Defold render system
+```
+
+`msg_helpers.COMMAND` 集中定義常用的 command 名稱：
+
+```lua
+msg_helpers.COMMAND.USE_FIXED_FIT_PROJECTION
+msg_helpers.COMMAND.ACQUIRE_INPUT_FOCUS
+msg_helpers.COMMAND.RELEASE_INPUT_FOCUS
+```
+
+### Usage
+
+```lua
+local msg_helpers = require("utility.msg_helpers")
+
+function init(self)
+    -- 讓目前 component 取得 input focus
+    msg_helpers.acquire_input_focus()
+
+    -- 設定 render 的 fixed fit projection
+    msg_helpers.use_fixed_fit_projection(-1, 1)
+end
+
+function final(self)
+    -- 離開或銷毀 component 前釋放 input focus
+    msg_helpers.release_input_focus()
+end
+```
+
+### Available helpers
+
+| 函式 | 說明 |
+|---|---|
+| `use_fixed_fit_projection(near, far)` | 對 `@render:` 發送 `use_fixed_fit_projection`；`near` 預設為 `-1`，`far` 預設為 `1`。 |
+| `acquire_input_focus()` | 對目前 component 發送 `acquire_input_focus`。 |
+| `release_input_focus()` | 對目前 component 發送 `release_input_focus`。 |
+| `post_render(command, params)` | 對 `@render:` 發送自訂 command 與參數。 |
+
+也可以使用通用的 `post_render`：
+
+```lua
+msg_helpers.post_render(
+    msg_helpers.COMMAND.USE_FIXED_FIT_PROJECTION,
+    { near = -1, far = 1 }
+)
+```
+
+新增常用 message 時，建議先在 `COMMAND` 中定義 command，再提供一個語意清楚的 helper 函式，讓其他 script 不必直接依賴 command 字串。
